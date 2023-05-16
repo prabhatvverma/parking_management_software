@@ -59,6 +59,10 @@ class usersController {
      */
     async varifyEmail(req, res) {
         try {
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() });
+            }
             const _id = cryptr.decrypt(req.query._id)
             await User.updateOne({
                 _id: _id
