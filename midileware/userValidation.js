@@ -26,20 +26,20 @@ const registrationValidation = [
         .not().isEmpty().trim().withMessage("Please Enter Your Address").bail()
         .isLength({ min: 5 }).withMessage("Atleast 5 Charectors").bail(),
 
-    body("password")
+    passwordCheck = body("password")
         .not().isEmpty().trim().withMessage("Please Enter Your Password").bail()
         .isLength({ min: 4 }).withMessage("Atleast 4 Charectors").bail()
-
-]
+];
 
 const loginValidation = [
-    body("email").isEmpty().trim().withMessage("Please Enter Your Email").bail()
+    body("email")
+        .not().isEmpty().trim().withMessage("Please Enter Your Email").bail()
         .isEmail().withMessage("Please Enter Valid Email").bail()
         .custom(async (value) => {
             const userData = await User.findOne({
                 email: value
             })
-            if (userData = null) {
+            if (userData == null) {
                 throw new Error("Invalid email or password")
             }
         }).bail(),
@@ -48,11 +48,13 @@ const loginValidation = [
         .isLength({ min: 4 }).withMessage("Atleast 4 Charectors").bail()
         .custom(async (value, { req }) => {
             const userData = await User.findOne({
-                email: req.body.eamil
+                email: req.body.email
             })
+            console.log(userData);
+            const encryptedPassword = userData.password;
             if (userData) {
                 const varifyPassword = await bcrypt.compare(value, userData.password)
-                if (verfication == false) {
+                if (varifyPassword == false) {
                     throw new Error("Invalid email or password")
                 }
             }
@@ -70,11 +72,29 @@ const loginValidation = [
                     return
                 }
                 if (userData.emailVerifiedAt == null) {
+                    // console.log("you are here");
                     throw new Error("Please verify your Email")
                 }
             }
         }).bail()
+];
 
-
+const forgetPassworvalidation = [
+    body("email")
+        .not().isEmpty().trim().withMessage("Please Enter Your Email").bail()
+        .isEmail().withMessage("Please Enter Valid Email").bail()
+        .custom(async (value) => {
+            const userData = await User.findOne({
+                email: value
+            })
+            if (userData == null) {
+                throw new Error("Invalid Email")
+            }
+        }).bail()
 ]
-module.exports = { registrationValidation, loginValidation };
+
+const CreateNewPasswordValidation = [
+    registrationValidation[4]
+]   
+module.exports = { registrationValidation, loginValidation, forgetPassworvalidation, CreateNewPasswordValidation };
+// module.exports = loginValidation;

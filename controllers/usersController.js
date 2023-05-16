@@ -16,6 +16,7 @@ class usersController {
     async signUp(req, res) {
         try {
             const errors = validationResult(req);
+            console.log(errors);
             if (!errors.isEmpty()) {
                 return res.status(400).json({ errors: errors.array() });
             }
@@ -90,6 +91,38 @@ class usersController {
                 return res.status(400).json({ errors: errors.array() });
             }
             res.status(200).json({ message: 'User Successfully Login' });
+        } catch (error) {
+            res.status(401).json({ "error": error })
+        }
+    }
+    /**
+     * Forget Password Chech User Exist or not if exist next else show Invalid email
+     * @param {*} req 
+     * @param {*} res 
+     * @returns 
+     */
+    async userforgetPassword(req, res) {
+        try {
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() });
+            }
+            res.status(200).json({ message: 'User Successfully Login' });
+        } catch (error) {
+
+        }
+    }
+
+    async createNewPasswordForUser(req, res) {
+        try {
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() });
+            }
+            User.findOneAndUpdate({
+                email: req.body.email
+            },
+                { $set: { password: req.body.password } })
         } catch (error) {
             res.status(401).json({ "error": error })
         }
