@@ -1,9 +1,11 @@
 const { body } = require('express-validator');
 const User = require('../models/user');
 const bcrypt = require('bcrypt');
-
+/**
+ * Validation Conditions For User Registration 
+ */
 const registrationValidation = [
-    body("fullName")
+    body("name")
         .not().isEmpty().trim().withMessage("Please Enter Your Name").bail()
         .isLength({ min: 3 }).trim().withMessage("Name must have atleast 4 cheractors").bail(),
 
@@ -26,11 +28,23 @@ const registrationValidation = [
         .not().isEmpty().trim().withMessage("Please Enter Your Address").bail()
         .isLength({ min: 5 }).withMessage("Atleast 5 Charectors").bail(),
 
-    passwordCheck = body("password")
+    body("password")
         .not().isEmpty().trim().withMessage("Please Enter Your Password").bail()
-        .isLength({ min: 4 }).withMessage("Atleast 4 Charectors").bail()
-];
+        .isLength({ min: 4 }).withMessage("Atleast 4 Charectors").bail(),
+    body("cnfPassword").not().isEmpty().withMessage("Enter Password").bail()
+        .custom(async (value, { req }) => {
+            if (value !== req.body.password) {
+                throw new Error("Please Enter Same Password");
+            }
+        })
 
+];
+/**
+ * User Login Vlidation 
+ * check email
+ * Check If User Email Is Verfied Or Not
+ * Check User Password Is Matched Or Not
+ */
 const loginValidation = [
     body("email")
         .not().isEmpty().trim().withMessage("Please Enter Your Email").bail()
@@ -40,18 +54,17 @@ const loginValidation = [
                 email: value
             })
             if (userData == null) {
-                throw new Error("Invalid email or password")
+                throw new Error("you Are Not Registered")
             }
+            if(userData.emailVerifiedAt == null)
+                throw new Error("Please verify your Email")     
         }).bail(),
     body("password")
         .not().isEmpty().trim().withMessage("Please Enter Your Password").bail()
-        .isLength({ min: 4 }).withMessage("Atleast 4 Charectors").bail()
         .custom(async (value, { req }) => {
             const userData = await User.findOne({
                 email: req.body.email
             })
-            console.log(userData);
-            const encryptedPassword = userData.password;
             if (userData) {
                 const varifyPassword = await bcrypt.compare(value, userData.password)
                 if (varifyPassword == false) {
@@ -59,26 +72,10 @@ const loginValidation = [
                 }
             }
         }).bail(),
-    body("emailVerifiedAt")
-        .custom(async (value, { req }) => {
-            const userData = await User.findOne({
-                email: req.body.email
-            })
-            if (userData) {
-                if (userData == null) {
-                    return
-                }
-                if (await bcrypt.compare(req.body.password, userData.password) == false) {
-                    return
-                }
-                if (userData.emailVerifiedAt == null) {
-                    // console.log("you are here");
-                    throw new Error("Please verify your Email")
-                }
-            }
-        }).bail()
 ];
-
+/**
+ * Validation Check If The User Looking For CHange Password iS exxist Or not
+ */
 const forgetPassworvalidation = [
     body("email")
         .not().isEmpty().trim().withMessage("Please Enter Your Email").bail()
@@ -93,8 +90,13 @@ const forgetPassworvalidation = [
         }).bail()
 ]
 
+/**
+ * Simple Password Vlidation For User To Recreate User Password
+ */
 const CreateNewPasswordValidation = [
     registrationValidation[4]
-]   
+]
 module.exports = { registrationValidation, loginValidation, forgetPassworvalidation, CreateNewPasswordValidation };
 // module.exports = loginValidation;
+
+// export{ registrationValidation, loginValidation, forgetPassworvalidation, CreateNewPasswordValidation };

@@ -1,12 +1,13 @@
 const bcrypt = require('bcrypt');
 const User = require('../models/user');
 const sendMail = require('../services/emailService');
+const jwt = require('jsonwebtoken');
 const Cryptr = require('cryptr');
 const cryptr = new Cryptr(process.env.SECRET_KEY);
 const { validationResult } = require('express-validator');
+const secretkey = "khsdfjklhsdfklhl";
 
 class usersController {
-
     /**
      * User Registraion With Validation  Result 
      * @param {*} req 
@@ -14,19 +15,19 @@ class usersController {
      * @returns 
      */
     async signUp(req, res) {
+        const hashedPassword = await bcrypt.hash(req.body.password, 10);
         try {
             const errors = validationResult(req);
             console.log(errors);
             if (!errors.isEmpty()) {
                 return res.status(400).json({ errors: errors.array() });
-            }
-            const password = await bcrypt.hash(req.body.password, 10);
+            }        
             await User.create({
-                name: req.body.fullName,
+                name: req.body.name,
                 email: req.body.email,
                 address: req.body.address,
                 phoneNo: req.body.phoneNo,
-                password: password
+                password: hashedPassword
             })
             const userData = await User.findOne(
                 {
@@ -34,17 +35,14 @@ class usersController {
                 }
             )
             const userId = userData._id.toHexString();
-            const encryptedId = cryptr.encrypt(userId)
             const name = userData.name;
+            const emailFrom = "parkingsoftware@debut.com"
             const emailTO = userData.email;
-            const emailFrom = "prabhat@gmail.com"
-            let url = "http://localhost:3000/verify?_id=" + encryptedId
+            let url = "http://localhost:3000/api/auth//verify?_id=" + userId
             sendMail({
                 from: emailFrom,
                 to: emailTO,
-
                 subject: "Email Varification",
-                text: `${emailFrom} shared you a link to verify this is you`,
                 html: 'Hii ' + name + ',please click here <a href="' + url + '">Verify</a> your mail'
             });
             res.status(200).json({ message: 'Please Check Your Email And Verify Your Email' });
@@ -60,13 +58,13 @@ class usersController {
      */
     async varifyEmail(req, res) {
         try {
-            const errors = validationResult(req);
-            if (!errors.isEmpty()) {
-                return res.status(400).json({ errors: errors.array() });
+            // const _id = cryptr.decrypt(req.query._id)
+            const userDate = await User.findById(req.query._id)
+            if (userDate.emailVerifiedAt != null) {
+                return res.json({ Message: "Email Already Verified" })
             }
-            const _id = cryptr.decrypt(req.query._id)
             await User.updateOne({
-                _id: _id
+                _id: req.query._id
             },
                 {
                     $set: { emailVerifiedAt: Date() }
@@ -90,7 +88,15 @@ class usersController {
             if (!errors.isEmpty()) {
                 return res.status(400).json({ errors: errors.array() });
             }
-            res.status(200).json({ message: 'User Successfully Login' });
+            const userData = await User.findOne({
+                email: req.body.email
+            })
+            const userId = userData._id.toHexString();
+            jwt.sign({ userId }, secretkey, { expiresIn: '300s' }, (err, token) => {
+                console.log(err);
+                res.status(200).json({ message: 'User Successfully Login' 
+                ,token});
+            })
         } catch (error) {
             res.status(401).json({ "error": error })
         }
@@ -109,11 +115,17 @@ class usersController {
             }
             res.status(200).json({ message: 'User Successfully Login' });
         } catch (error) {
-
+            res.status(401).json({ "error": error })
         }
     }
-
+    /**
+     * User Can Create New Password For User
+     * @param {*} req 
+     * @param {*} res 
+     * @returns 
+     */
     async createNewPasswordForUser(req, res) {
+        const hashedPassword = await bcrypt.hash(req.body.password, 10);
         try {
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
@@ -122,7 +134,7 @@ class usersController {
             User.findOneAndUpdate({
                 email: req.body.email
             },
-                { $set: { password: req.body.password } })
+                { $set: { password: hashedPassword} })
         } catch (error) {
             res.status(401).json({ "error": error })
         }

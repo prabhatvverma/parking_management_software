@@ -14,7 +14,7 @@ mongoConnection();
 
 // 
 const usersRoute = require('./routes/users');
-
+const dailySessionRoute = require('./routes/userDailySession');
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -27,7 +27,8 @@ app.use(fileUpload({
 
 // app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', usersRoute);
+app.use('/api/auth/', usersRoute);
+app.use('/api/session/', dailySessionRoute);
 
 
 // catch 404 and forward to error handler
@@ -45,5 +46,7 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   
 });
-
+app.listen(3000,()=>{
+  console.log("runnig on 3000");
+})
 module.exports = app;
