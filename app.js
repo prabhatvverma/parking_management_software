@@ -13,9 +13,9 @@ const app = express();
 mongoConnection();
 
 // 
-const usersRoute = require('./routes/users');
-const dailySessionRoute = require('./routes/userDailySession');
-
+const usersRoute = require('./routes/usersRoutes');
+const dailySessionRoute = require('./routes/userDailySessionRoutes');
+const vehicleInfoRoute = require('./routes/vehicleInfoRoute');
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -25,10 +25,11 @@ app.use(fileUpload({
   tempFileDir : '/tmp/'
 }));
 
-// app.use(express.static(path.join(__dirname, 'public')));
+
 
 app.use('/api/auth/', usersRoute);
 app.use('/api/session/', dailySessionRoute);
+app.use('/api/vehicleinfo/', vehicleInfoRoute);
 
 
 // catch 404 and forward to error handler
@@ -42,7 +43,6 @@ app.use(function(err, req, res, next) {
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-  // render the error page
   res.status(err.status || 500);
   
 });

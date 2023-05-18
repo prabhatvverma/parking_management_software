@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const usersController = require('../controllers/usersAuthController');
-const validation = require('../midileware/userValidation');
+const validation = require('../midileware/validation/userValidation');
 
 
 router.post('/signup', validation.registrationValidation,usersController.signUp);

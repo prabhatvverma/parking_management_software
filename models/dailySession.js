@@ -3,34 +3,34 @@ const Schema = mongoose.Schema;
 
 const dailySessionScema = new Schema({
     userId: {
-        type: String,
+        type: Schema.Types.ObjectId,
         required: true
     },
     address: {
         type: String,
-        required: true
+        required: false
     },
     totalSlots: {
         type: String,
-        required: true
+        required: false
     },
     price: {
         type: Number,
-        required: true
+        required: false
     },
     totalAvailbleSlots: {
         type: String,
-        required: true
+        required: false
     },
     activeAddress: {
         type: String,
-        required: true
+        required: false
     },
     total_income: {
         type: String,
-        required: true
+        required: false
     }
 
-},{ timestamps: true });
+},{ timestamps: false });
 
 module.exports = mongoose.model('DailySession', dailySessionScema);

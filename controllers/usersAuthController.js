@@ -3,9 +3,8 @@ const User = require('../models/user');
 const sendMail = require('../services/emailService');
 const jwt = require('jsonwebtoken');
 const Cryptr = require('cryptr');
-const cryptr = new Cryptr(process.env.SECRET_KEY);
+const cryptr = new Cryptr(process.env.CRYPTR_SECRET_KEY);
 const { validationResult } = require('express-validator');
-const secretkey = "khsdfjklhsdfklhl";
 
 class usersController {
     /**
@@ -35,10 +34,11 @@ class usersController {
                 }
             )
             const userId = userData._id.toHexString();
+            const encryptedId = cryptr.encrypt(userId);
             const name = userData.name;
             const emailFrom = "parkingsoftware@debut.com"
             const emailTO = userData.email;
-            let url = "http://localhost:3000/api/auth//verify?_id=" + userId
+            let url = "http://localhost:3000/api/auth/verify?_id=" + encryptedId
             sendMail({
                 from: emailFrom,
                 to: emailTO,
@@ -58,13 +58,13 @@ class usersController {
      */
     async varifyEmail(req, res) {
         try {
-            // const _id = cryptr.decrypt(req.query._id)
-            const userDate = await User.findById(req.query._id)
+            const _id = cryptr.decrypt(req.query._id)
+            const userDate = await User.findById(_id)
             if (userDate.emailVerifiedAt != null) {
                 return res.json({ Message: "Email Already Verified" })
             }
             await User.updateOne({
-                _id: req.query._id
+                _id: _id
             },
                 {
                     $set: { emailVerifiedAt: Date() }
@@ -92,7 +92,7 @@ class usersController {
                 email: req.body.email
             })
             const userId = userData._id.toHexString();
-            jwt.sign({ userId }, secretkey, { expiresIn: '300s' }, (err, token) => {
+            jwt.sign({ userId }, process.env.JWT_SECRET_KEY, { expiresIn: '24h' }, (err, token) => {
                 console.log(err);
                 res.status(200).json({ message: 'User Successfully Login' 
                 ,token});
@@ -101,6 +101,7 @@ class usersController {
             res.status(401).json({ "error": error })
         }
     }
+
     /**
      * Forget Password Chech User Exist or not if exist next else show Invalid email
      * @param {*} req 
@@ -113,11 +114,20 @@ class usersController {
             if (!errors.isEmpty()) {
                 return res.status(400).json({ errors: errors.array() });
             }
-            res.status(200).json({ message: 'User Successfully Login' });
+            const encryptedEmail = cryptr.encrypt(req.body.email);
+            let url = "http://localhost:3000/api/auth/changepassword?email=" + encryptedEmail
+            sendMail({
+                from: "parkingsoftware@debut.com",
+                to: req.body.email,
+                subject: "Forget Password",
+                html: 'Hii ' + req.body.email + ',please click here <a href="' + url + '">Reset</a> your Password'
+            });
+            res.status(200).json({ message: 'We Have Send An Email Link To Reset Your Password' });
         } catch (error) {
             res.status(401).json({ "error": error })
         }
     }
+
     /**
      * User Can Create New Password For User
      * @param {*} req 
@@ -125,6 +135,7 @@ class usersController {
      * @returns 
      */
     async createNewPasswordForUser(req, res) {
+        const email = cryptr.decrypt(req.query.email)
         const hashedPassword = await bcrypt.hash(req.body.password, 10);
         try {
             const errors = validationResult(req);
@@ -132,7 +143,7 @@ class usersController {
                 return res.status(400).json({ errors: errors.array() });
             }
             User.findOneAndUpdate({
-                email: req.body.email
+                email: email
             },
                 { $set: { password: hashedPassword} })
         } catch (error) {

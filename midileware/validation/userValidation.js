@@ -1,5 +1,5 @@
 const { body } = require('express-validator');
-const User = require('../models/user');
+const User = require('../../models/user');
 const bcrypt = require('bcrypt');
 /**
  * Validation Conditions For User Registration 
@@ -7,7 +7,7 @@ const bcrypt = require('bcrypt');
 const registrationValidation = [
     body("name")
         .not().isEmpty().trim().withMessage("Please Enter Your Name").bail()
-        .isLength({ min: 3 }).trim().withMessage("Name must have atleast 4 cheractors").bail(),
+        .isLength({ min: 4 }).trim().withMessage("Name must have atleast 4 cheractors").bail(),
 
     body("email")
         .not().isEmpty().trim().withMessage("Please Enter Your Email").bail()

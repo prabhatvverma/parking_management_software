@@ -1,0 +1,57 @@
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
+
+const ticketHistorySchema = new Schema({
+    userId: {
+        type: Schema.Types.ObjectId,
+        required: true
+    },
+    session_id: {
+        type: Schema.Types.ObjectId,
+        required: true
+    },
+    slotNo: {
+        type: Number,
+        required: true
+    },
+    vehicleOwnerName: {
+        type: String,
+        required: true
+    },
+    vehicleOwnerEmail: {
+        type: String,
+        required: true
+    },
+    vehicleOwnerPhoneNo: {
+        type: BigInt,
+        required: true
+    },
+    vehicleType: {
+        type: String,
+        enum: ['car', 'jeep'],
+        default: 'null'
+    },
+    vehicleNo: {
+        type: String,
+        required: true,
+    },
+    slotStatus:{
+        type:String,
+        enum:['parked', 'free'],
+        default: 'parked'
+    },
+    VehicleEntered_At: {
+        type: Date,
+        required: true
+    },
+    vehicleReturned_At: {
+        type: Date,
+        required: false
+    },
+    totalRent: {
+        type: String,
+        required: true
+    }
+})
+
+module.exports = mongoose.model('TicketHistory', ticketHistorySchema);
