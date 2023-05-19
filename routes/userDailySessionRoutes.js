@@ -1,10 +1,11 @@
-const router = require("express").Router();
-const userAddressSlotController = require("../controllers/userAddress.SlotController")
-const authentication = require("../midileware/authentication/jwtAuth")
-const slotValidation = require("../midileware/validation/userSlotValidation")
+import { Router } from "express";
+const router = Router()
+import userAddressSlotController from "../controllers/userAddress.SlotController.js";
+import authentication from "../midileware/authentication/jwtAuth.js";
+import slotValidation from "../midileware/validation/userSlotValidation.js";
 
 router.use(authentication);
-router.post('/',slotValidation,userAddressSlotController.addAddressForSession);
-router.post('/address', userAddressSlotController.selectAddressForSession);
-
-module.exports = router;
+router.get('/', userAddressSlotController.getAddress);
+router.post('/addslot', slotValidation, userAddressSlotController.addAddressForSession);
+router.post('/showdetails', userAddressSlotController.showDetailsForSelectedSlot)
+export default router;

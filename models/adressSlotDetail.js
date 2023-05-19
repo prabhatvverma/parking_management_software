@@ -1,30 +1,32 @@
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+import { Schema as _Schema, model } from "mongoose";
+const Schema = _Schema;
 
-const dailySessionScema = new Schema({
+const adressSlotDetailScema = new Schema({
     userId: {
         type: Schema.Types.ObjectId,
         required: true
     },
     address: {
         type: String,
-        required: false
+        required: true
     },
     totalSlots: {
-        type: String,
-        required: false
+        type: Number,
+        required: true
     },
     price: {
         type: Number,
-        required: false
+        required: true
     },
     totalAvailbleSlots: {
         type: String,
-        required: false
+        required: true
     },
     activeAddress: {
         type: String,
-        required: false
+        enum:["active", "inActive"],
+        default:"inActive",
+        required: true
     },
     total_income: {
         type: String,
@@ -33,4 +35,4 @@ const dailySessionScema = new Schema({
 
 },{ timestamps: false });
 
-module.exports = mongoose.model('DailySession', dailySessionScema);
+export default model('DailySession', adressSlotDetailScema);

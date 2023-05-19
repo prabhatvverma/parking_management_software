@@ -1,13 +1,26 @@
-const { body } = require('express-validator');
-const User = require('../../models/user');
-const bcrypt = require('bcrypt');
+import { body } from 'express-validator';
+import User from '../../models/user.js';
+import { compare } from 'bcrypt';
 /**
  * Validation Conditions For User Registration 
  */
 const registrationValidation = [
+    /**
+     * VALIDATION TO BE APPLY ON NAME
+     * NOT TO BE NULL
+     * MIN LENGTH MUST BE 4
+     */
+
     body("name")
         .not().isEmpty().trim().withMessage("Please Enter Your Name").bail()
         .isLength({ min: 4 }).trim().withMessage("Name must have atleast 4 cheractors").bail(),
+
+    /**
+     * VALIDATION TO BE APPLY ON NAME
+     * NOT TO BE NULL
+     * MUST BE AN EMAIL
+     * NOT TO ALREADY REGISTERED
+     */
 
     body("email")
         .not().isEmpty().trim().withMessage("Please Enter Your Email").bail()
@@ -20,17 +33,27 @@ const registrationValidation = [
                 throw new Error("Email alredy exist")
             }
         }).bail(),
+
+    /**
+     * VALIDATION TO BE APPLYED ON PHONE NO 
+     * NOT TO MBE NULL
+     * MUST BE A PHONE NO 
+     */
     body("phoneNo")
         .not().isEmpty().trim().withMessage("Please Enter Your Phone no.").bail()
         .isMobilePhone().withMessage("Please Eneter Valid Phone no.").bail(),
 
+    // VALIDATION ON ADDRESS    
     body("address")
         .not().isEmpty().trim().withMessage("Please Enter Your Address").bail()
         .isLength({ min: 5 }).withMessage("Atleast 5 Charectors").bail(),
 
+    //VALIDATION APPLYED ON PASSWORD    
     body("password")
         .not().isEmpty().trim().withMessage("Please Enter Your Password").bail()
         .isLength({ min: 4 }).withMessage("Atleast 4 Charectors").bail(),
+
+    // VALIDATION FRO CONFERM PASSWORD
     body("cnfPassword").not().isEmpty().withMessage("Enter Password").bail()
         .custom(async (value, { req }) => {
             if (value !== req.body.password) {
@@ -56,17 +79,18 @@ const loginValidation = [
             if (userData == null) {
                 throw new Error("you Are Not Registered")
             }
-            if(userData.emailVerifiedAt == null)
-                throw new Error("Please verify your Email")     
+            if (userData.emailVerifiedAt == null)
+                throw new Error("Please verify your Email")
         }).bail(),
     body("password")
         .not().isEmpty().trim().withMessage("Please Enter Your Password").bail()
+        .isLength({ min: 4 }).withMessage("Atleast 4 Charectors").bail()
         .custom(async (value, { req }) => {
             const userData = await User.findOne({
                 email: req.body.email
             })
             if (userData) {
-                const varifyPassword = await bcrypt.compare(value, userData.password)
+                const varifyPassword = await compare(value, userData.password)
                 if (varifyPassword == false) {
                     throw new Error("Invalid email or password")
                 }
@@ -93,10 +117,20 @@ const forgetPassworvalidation = [
 /**
  * Simple Password Vlidation For User To Recreate User Password
  */
-const CreateNewPasswordValidation = [
-    registrationValidation[4]
+const createNewPasswordValidation = [
+    body("password")
+        .not().isEmpty().trim().withMessage("Please Enter Your Password").bail()
+        .isLength({ min: 4 }).withMessage("Atleast 4 Charectors").bail(),
+
+    body("cnfPassword").not().isEmpty().withMessage("Enter Password").bail()
+        .custom(async (value, { req }) => {
+            if (value !== req.body.password) {
+                throw new Error("Please Enter Same Password");
+            }
+        })
+
 ]
-module.exports = { registrationValidation, loginValidation, forgetPassworvalidation, CreateNewPasswordValidation };
+export  { registrationValidation, loginValidation, forgetPassworvalidation, createNewPasswordValidation };
 // module.exports = loginValidation;
 
 // export{ registrationValidation, loginValidation, forgetPassworvalidation, CreateNewPasswordValidation };

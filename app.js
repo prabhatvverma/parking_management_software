@@ -1,10 +1,9 @@
-const createError = require('http-errors');
-const express = require('express');
-const path = require('path');
-const cookieParser = require('cookie-parser');
-const logger = require('morgan');
-const mongoConnection = require("./config/config");
-const fileUpload = require('express-fileupload');
+import createError from 'http-errors';
+import express, { json, urlencoded } from 'express';
+import cookieParser from 'cookie-parser';
+import logger from 'morgan';
+import mongoConnection from "./config/config.js";
+import fileUpload from 'express-fileupload';
 
 
 const app = express();
@@ -12,13 +11,13 @@ const app = express();
 // DB CONNECTION 
 mongoConnection();
 
-// 
-const usersRoute = require('./routes/usersRoutes');
-const dailySessionRoute = require('./routes/userDailySessionRoutes');
-const vehicleInfoRoute = require('./routes/vehicleInfoRoute');
+// REQUIRING ROUTES FOLDER FILE TO DEFINE ROUTES
+import usersRoute from './routes/usersRoutes.js';
+import dailySessionRoute from './routes/userDailySessionRoutes.js';
+import vehicleInfoRoute from './routes/vehicleInfoRoute.js';
 app.use(logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(json());
+app.use(urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(fileUpload({
   useTempFiles : true,
@@ -26,7 +25,7 @@ app.use(fileUpload({
 }));
 
 
-
+//CREATING ROUTE
 app.use('/api/auth/', usersRoute);
 app.use('/api/session/', dailySessionRoute);
 app.use('/api/vehicleinfo/', vehicleInfoRoute);
@@ -49,4 +48,4 @@ app.use(function(err, req, res, next) {
 app.listen(3000,()=>{
   console.log("runnig on 3000");
 })
-module.exports = app;
+export default app;

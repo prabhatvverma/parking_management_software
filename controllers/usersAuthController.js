@@ -1,10 +1,11 @@
-const bcrypt = require('bcrypt');
-const User = require('../models/user');
-const sendMail = require('../services/emailService');
-const jwt = require('jsonwebtoken');
-const Cryptr = require('cryptr');
+import {} from 'dotenv/config'
+import { hash } from 'bcrypt';
+import User from '../models/user.js';
+import sendMail from '../services/emailService.js';
+import  sign  from 'jsonwebtoken';
+import Cryptr from 'cryptr';
 const cryptr = new Cryptr(process.env.CRYPTR_SECRET_KEY);
-const { validationResult } = require('express-validator');
+import { validationResult } from 'express-validator';
 
 class usersController {
     /**
@@ -14,13 +15,13 @@ class usersController {
      * @returns 
      */
     async signUp(req, res) {
-        const hashedPassword = await bcrypt.hash(req.body.password, 10);
+        const hashedPassword = await hash(req.body.password, 10);
         try {
             const errors = validationResult(req);
             console.log(errors);
             if (!errors.isEmpty()) {
                 return res.status(400).json({ errors: errors.array() });
-            }        
+            }
             await User.create({
                 name: req.body.name,
                 email: req.body.email,
@@ -28,11 +29,13 @@ class usersController {
                 phoneNo: req.body.phoneNo,
                 password: hashedPassword
             })
-            const userData = await User.findOne(
+            const userData = await findOne(
                 {
                     email: req.body.email
                 }
             )
+
+            //SENDING VARIFICATION EMAIL
             const userId = userData._id.toHexString();
             const encryptedId = cryptr.encrypt(userId);
             const name = userData.name;
@@ -59,7 +62,7 @@ class usersController {
     async varifyEmail(req, res) {
         try {
             const _id = cryptr.decrypt(req.query._id)
-            const userDate = await User.findById(_id)
+            const userDate = await findById(_id)
             if (userDate.emailVerifiedAt != null) {
                 return res.json({ Message: "Email Already Verified" })
             }
@@ -92,10 +95,12 @@ class usersController {
                 email: req.body.email
             })
             const userId = userData._id.toHexString();
-            jwt.sign({ userId }, process.env.JWT_SECRET_KEY, { expiresIn: '24h' }, (err, token) => {
+            sign({ userId }, process.env.JWT_SECRET_KEY, { expiresIn: '24h' }, (err, token) => {
                 console.log(err);
-                res.status(200).json({ message: 'User Successfully Login' 
-                ,token});
+                res.status(200).json({
+                    message: 'User Successfully Login'
+                    , token
+                });
             })
         } catch (error) {
             res.status(401).json({ "error": error })
@@ -114,6 +119,7 @@ class usersController {
             if (!errors.isEmpty()) {
                 return res.status(400).json({ errors: errors.array() });
             }
+            //SENDING EMAIL TO USER TO RESET HIS PASSWOORD
             const encryptedEmail = cryptr.encrypt(req.body.email);
             let url = "http://localhost:3000/api/auth/changepassword?email=" + encryptedEmail
             sendMail({
@@ -136,20 +142,20 @@ class usersController {
      */
     async createNewPasswordForUser(req, res) {
         const email = cryptr.decrypt(req.query.email)
-        const hashedPassword = await bcrypt.hash(req.body.password, 10);
+        const hashedPassword = await hash(req.body.password, 10);
         try {
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
                 return res.status(400).json({ errors: errors.array() });
             }
-            User.findOneAndUpdate({
+            findOneAndUpdate({
                 email: email
             },
-                { $set: { password: hashedPassword} })
+                { $set: { password: hashedPassword } })
         } catch (error) {
             res.status(401).json({ "error": error })
         }
     }
 }
 
-module.exports = new usersController;
+export default new usersController;

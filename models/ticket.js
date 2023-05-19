@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
+import { Schema as _Schema, model } from 'mongoose';
+const Schema = _Schema;
 
 const ticketSchema = new Schema({
     sessionId: {
@@ -41,4 +41,4 @@ const ticketSchema = new Schema({
     }
 })
 
-module.exports = mongoose.model('Ticket', ticketSchema);
+export default model('Ticket', ticketSchema);

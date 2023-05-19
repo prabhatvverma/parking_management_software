@@ -1,7 +1,7 @@
-const nodemailer = require('nodemailer');
+import { createTransport } from 'nodemailer';
 
 async function sendMail({ from, to, subject, text, html }) {
-    const transporter = nodemailer.createTransport({
+    const transporter = createTransport({
         service: process.env.SMTP_SERVICE,
         auth: {
             user:process.env.SMTP_USER ,
@@ -18,4 +18,4 @@ async function sendMail({ from, to, subject, text, html }) {
         console.log(info);
 }
 
-module.exports = sendMail;
+export default sendMail;

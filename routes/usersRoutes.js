@@ -1,11 +1,12 @@
-const router = require('express').Router();
-const usersController = require('../controllers/usersAuthController');
-const validation = require('../midileware/validation/userValidation');
+import { Router } from "express";
+const router = Router()
+import usersController from '../controllers/usersAuthController.js';
+import { registrationValidation, loginValidation, forgetPassworvalidation, createNewPasswordValidation } from '../midileware/validation/userValidation.js';
 
 
-router.post('/signup', validation.registrationValidation,usersController.signUp);
+router.post('/signup', registrationValidation,usersController.signUp);
 router.post('/verify',  usersController.varifyEmail);
-router.post('/login', validation.loginValidation,usersController.loginUser)
-router.post('/forget', validation.forgetPassworvalidation,usersController.userforgetPassword);
-router.post('/changepassword', validation.CreateNewPasswordValidation,usersController.createNewPasswordForUser);
-module.exports = router;
+router.post('/login', loginValidation,usersController.loginUser)
+router.post('/forget', forgetPassworvalidation,usersController.userforgetPassword);
+router.post('/changepassword', createNewPasswordValidation,usersController.createNewPasswordForUser);
+export default router;

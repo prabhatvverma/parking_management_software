@@ -1,4 +1,4 @@
-const Ticket = require("../models/ticket");
+import Ticket from "../models/ticket.js";
 
 class vehicleinfoController {
     /**
@@ -23,4 +23,4 @@ class vehicleinfoController {
     }
 }
 
-module.exports = new vehicleinfoController;
+export default new vehicleinfoController;

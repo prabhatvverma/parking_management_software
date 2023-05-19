@@ -1,5 +1,5 @@
-const { body } = require('express-validator');
-const DailySession = require("../../models/dailySession");
+import { body } from 'express-validator';
+import DailySession from "../../models/adressSlotDetail.js";
 const slotValidation = [
 
     /**
@@ -28,7 +28,7 @@ const slotValidation = [
      * SHOULD BE INTEGER TYPE
      */
     body("totalSlots")
-        .not().isEmpty().trim().withMessage("Please Enter Slots").bail()
+        .not().isEmpty().trim().withMessage("Please Enter Total Available Slots").bail()
         .isInt().withMessage("Please Enter Slots In Number Formate").bail(),
     
     /**
@@ -41,4 +41,4 @@ const slotValidation = [
         .isNumeric().withMessage("Please Enter Price In Numaric Formate")
 ]
 
-module.exports = slotValidation;
+export default slotValidation;

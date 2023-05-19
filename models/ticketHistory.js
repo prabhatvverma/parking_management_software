@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
+import { Schema as _Schema, model } from 'mongoose';
+const Schema = _Schema;
 
 const ticketHistorySchema = new Schema({
     userId: {
@@ -54,4 +54,4 @@ const ticketHistorySchema = new Schema({
     }
 })
 
-module.exports = mongoose.model('TicketHistory', ticketHistorySchema);
+export default model('TicketHistory', ticketHistorySchema);

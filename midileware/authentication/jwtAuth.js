@@ -1,5 +1,5 @@
-const jwt = require('jsonwebtoken')
-const User = require('../../models/user')
+import { verify } from 'jsonwebtoken';
+import User from '../../models/user.js';
 
 
 const isAuthenticated = async (req, res, next) => {
@@ -17,7 +17,7 @@ const isAuthenticated = async (req, res, next) => {
         // verify JWT token(bearer token).
         try {
             const token = (req.headers.authorization).split(' ')[1]
-            jwt.verify(token, process.env.JWT_SECRET_KEY, async (err, data) => {
+            verify(token, process.env.JWT_SECRET_KEY, async (err, data) => {
                 if (err) {
                     res.status(401).send({
                         err
@@ -28,9 +28,6 @@ const isAuthenticated = async (req, res, next) => {
                     // set user id in request.
                     req.userData = user;
                     next()
-                    res.status(200).send({
-                        message:"Autherisation Successful"
-                    })
                 }
             })
         } catch (error) {
@@ -43,4 +40,4 @@ const isAuthenticated = async (req, res, next) => {
     }
 };
 
-module.exports = isAuthenticated
+export default isAuthenticated
