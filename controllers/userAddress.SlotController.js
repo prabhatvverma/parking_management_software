@@ -1,6 +1,6 @@
 import DailySession from "../models/adressSlotDetail.js";
 import { validationResult } from 'express-validator';
-
+import { messages,statusCode,response_status } from "../helpers/messegeStatusCode.js";
 class userAddressSlotController {
 
     /**
@@ -22,7 +22,7 @@ class userAddressSlotController {
                 totalSlots: req.body.totalSlots,
                 price: req.body.price
             })
-            res.status(200).json({ Message: "Address Slots Created Successfully" })
+            res.status(statusCode.ok).json({ Message: messages.SlotCreated, ResponceCode: response_status.success })
         } catch (error) {
             res.status(401).json({ "error": error })
         }

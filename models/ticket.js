@@ -14,28 +14,28 @@ const ticketSchema = new Schema({
         type: String,
         required: false
     },
-    vehicleOwnerEmail:{
-        type:String,
-        required:false
+    vehicleOwnerEmail: {
+        type: String, match: /^([^@]+?)@(([a-z0-9]-*)*[a-z0-9]+\.)+([a-z0-9]+)$/i,
+        required: false
     },
-    vehicleOwnerPhoneNo:{
-        type: BigInt,
+    vehicleOwnerPhoneNo: {
+        type: String,
         required: false
     },
     vehicleType: {
         type: String,
-        enum: ['car','jeep'],
-        default: 'null'
+        enum: ['car', 'jeep'],
+        default: ""
     },
-    vehicleNo:{
+    vehicleNo: {
         type: String,
         required: false,
     },
-    VehicleEntered_At:{
+    VehicleEntered_At: {
         type: Date,
         required: false
     },
-    vehicleReturned_At:{
+    vehicleReturned_At: {
         type: Date,
         required: false
     }

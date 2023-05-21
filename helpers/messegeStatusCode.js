@@ -1,23 +1,27 @@
 const messages = {
-    emailNotFound:
-      "This email does not exist in our community.Please check it out or contact to P.O.",
-    emailAlreadyVerified: "Upsss seems like this email is already verified.",
-    emailOtpSend:
-      "OTP has been sent to your registered email address. Please verify the OTP to use app.",
-    otpEnteredIncorrect: "You have entered an incorrect OTP.",
-    otpExpired:
-      "Your OTP has expired. Please generate a new OTP by clicking on resend OTP button.",
-    otpVerifiedSuccessfully: "OTP verified successfully.",
-  };
+  emailSentCuccessfully:
+    "We Have Send You A VrificAtion Link On Your Email Please Click On Verify To Verify Your Email.",
+  emailAlreadyVerified: "Upsss seems like this email is already verified.",
+  emailToResetPassword:
+    "We Have Send An Email Link To Reset Your Password Click On Reset To Reset Your Password",
+  emailVarified: "Your Email Has Been Successfully Varified",
+  LoginSuccess:
+    "User login SuccessFully",
   
-  const response_status = {
-    success: 1,
-    failure: 0,
-  };
-  const statusCode = {
-    ok: 200,
-    bad_request: 400,
-    internal_server_error: 500,
-  };
-  
-  module.exports = { messages, response_status, statusCode };
+
+
+  SlotCreated:
+  "Address Slots Have Been Created Successfully"
+};
+
+const response_status = {
+  success: 1,
+  failure: 0,
+};
+const statusCode = {
+  ok: 200,
+  bad_request: 400,
+  internal_server_error: 500,
+};
+
+export  { messages, response_status, statusCode };

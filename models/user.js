@@ -7,11 +7,11 @@ const userSchema = new Schema({
         required: true
     },
     email: {
-        type: String,
+        type: String , match: /^([^@]+?)@(([a-z0-9]-*)*[a-z0-9]+\.)+([a-z0-9]+)$/i,
         required: true
     },
     phoneNo:{
-        type:BigInt,
+        type:String,
         required:true
     },
     address:{

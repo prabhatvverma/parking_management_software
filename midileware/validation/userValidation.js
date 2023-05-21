@@ -24,7 +24,9 @@ const registrationValidation = [
 
     body("email")
         .not().isEmpty().trim().withMessage("Please Enter Your Email").bail()
-        .isEmail().withMessage("Please Enter Valid Email").bail()
+        // .isEmail().withMessage("Please Enter Valid Email").bail()
+        .matches(/^(?!\d+@)\w+([-+.']\w+)*@(?!\d+\.)\w+([-.]\w+)*\.\w+([-.]\w+)*$/).withMessage('Please Enter Valid Email').bail()
+        
         .custom(async (value) => {
             const userData = await User.findOne({
                 email: value
@@ -32,6 +34,7 @@ const registrationValidation = [
             if (userData != null) {
                 throw new Error("Email alredy exist")
             }
+            
         }).bail(),
 
     /**
@@ -41,12 +44,16 @@ const registrationValidation = [
      */
     body("phoneNo")
         .not().isEmpty().trim().withMessage("Please Enter Your Phone no.").bail()
+        .isLength({ min: 10 }).withMessage("Phone No. Must Have 10 Digits").bail()
+        .isLength({ max: 10 }).withMessage("Phone No. Does Not Have More Than 10 Digits").bail()
         .isMobilePhone().withMessage("Please Eneter Valid Phone no.").bail(),
 
     // VALIDATION ON ADDRESS    
     body("address")
         .not().isEmpty().trim().withMessage("Please Enter Your Address").bail()
-        .isLength({ min: 5 }).withMessage("Atleast 5 Charectors").bail(),
+        .isLength({ min: 5 }).withMessage("Atleast 5 Charectors").bail()
+        .isLength({ max: 25 }).withMessage("Address Can Not Have More Than 25 Words")
+    ,
 
     //VALIDATION APPLYED ON PASSWORD    
     body("password")
@@ -71,7 +78,7 @@ const registrationValidation = [
 const loginValidation = [
     body("email")
         .not().isEmpty().trim().withMessage("Please Enter Your Email").bail()
-        .isEmail().withMessage("Please Enter Valid Email").bail()
+        .matches(/^(?!\d+@)\w+([-+.']\w+)*@(?!\d+\.)\w+([-.]\w+)*\.\w+([-.]\w+)*$/).withMessage('Please Enter Valid Email').bail()
         .custom(async (value) => {
             const userData = await User.findOne({
                 email: value
@@ -103,7 +110,7 @@ const loginValidation = [
 const forgetPassworvalidation = [
     body("email")
         .not().isEmpty().trim().withMessage("Please Enter Your Email").bail()
-        .isEmail().withMessage("Please Enter Valid Email").bail()
+        .matches(/^(?!\d+@)\w+([-+.']\w+)*@(?!\d+\.)\w+([-.]\w+)*\.\w+([-.]\w+)*$/).withMessage('Please Enter Valid Email').bail()
         .custom(async (value) => {
             const userData = await User.findOne({
                 email: value
@@ -130,7 +137,9 @@ const createNewPasswordValidation = [
         })
 
 ]
-export  { registrationValidation, loginValidation, forgetPassworvalidation, createNewPasswordValidation };
+
+
+export { registrationValidation, loginValidation, forgetPassworvalidation, createNewPasswordValidation };
 // module.exports = loginValidation;
 
 // export{ registrationValidation, loginValidation, forgetPassworvalidation, CreateNewPasswordValidation };

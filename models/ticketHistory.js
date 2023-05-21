@@ -19,11 +19,11 @@ const ticketHistorySchema = new Schema({
         required: true
     },
     vehicleOwnerEmail: {
-        type: String,
+        type: String , match: /^([^@]+?)@(([a-z0-9]-*)*[a-z0-9]+\.)+([a-z0-9]+)$/i,
         required: true
     },
     vehicleOwnerPhoneNo: {
-        type: BigInt,
+        type: String,
         required: true
     },
     vehicleType: {
