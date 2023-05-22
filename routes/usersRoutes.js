@@ -5,7 +5,7 @@ import { registrationValidation, loginValidation, forgetPassworvalidation, creat
 import validateFile from "../midileware/validationresult/validationResult.js";
 
 router.post('/signup', registrationValidation, validateFile, usersController.signUp);
-router.post('/verify', usersController.varifyEmail);
+router.get('/verify', usersController.varifyEmail);
 router.post('/login', loginValidation, validateFile, usersController.loginUser)
 router.post('/forget', forgetPassworvalidation, validateFile, usersController.userforgetPassword);
 router.post('/changepassword', createNewPasswordValidation, validateFile, usersController.createNewPasswordForUser);

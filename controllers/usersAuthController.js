@@ -2,8 +2,9 @@ import { } from 'dotenv/config'
 import { hash } from 'bcrypt';
 import User from '../models/user.js';
 import sendMail from '../services/emailService.js';
-import sign from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 import Cryptr from 'cryptr';
+import { compare } from 'bcrypt';
 const cryptr = new Cryptr(process.env.CRYPTR_SECRET_KEY);
 import { messages, response_status, statusCode } from '../helpers/messegeStatusCode.js'
 
@@ -45,8 +46,7 @@ class usersController {
             });
             res.status(statusCode.ok, response_status.success).json({ message: messages.emailSentCuccessfully, Response: response_status.success });
         } catch (error) {
-            
-            res.status(statusCode.bad_request).json({ "error": error })
+            res.status(statusCode.internal_server_error).json({ error, ResponseStatus: response_status.failure })
         }
     }
 
@@ -58,7 +58,7 @@ class usersController {
     async varifyEmail(req, res) {
         try {
             const _id = cryptr.decrypt(req.query._id)
-            const userDate = await findById(_id)
+            const userDate = await User.findById(_id)
             if (userDate.emailVerifiedAt != null) {
                 return res.status(statusCode.ok).json({ Message: messages.emailAlreadyVerified, Response: response_status.success })
             }
@@ -69,9 +69,10 @@ class usersController {
                     $set: { emailVerifiedAt: Date() }
                 }
             );
-            res.status(statusCode.ok).json({ Message: messages.emailVarified, Response: response_status.success})
+            res.status(statusCode.ok).json({ Message: messages.emailVarified, Response: response_status.success })
         } catch (error) {
-            res.status(401).json({ "error": error })
+
+            res.status(statusCode.internal_server_error).json({ error, ResponseStatus: response_status.failure })
         }
     }
 
@@ -87,20 +88,25 @@ class usersController {
                 email: req.body.email
             })
             const userId = userData._id.toHexString();
-            sign({ userId }, process.env.JWT_SECRET_KEY, { expiresIn: '24h' }, (err, token) => {
-                console.log(err);
-                res.status(200).json({
-                    message: messages.LoginSuccess
-                    ,JswToken: token
-                });
-            })
+            const comparePass = await compare(req.body.password, userData.password)
+            // console.log(he);
+            // return false
+            if (comparePass == true) {
+                jwt.sign({ userId }, process.env.JWT_SECRET_KEY, { expiresIn: '24h' }, (err, token) => {
+                    res.status(200).json({
+                        message: messages.LoginSuccess
+                        , JswToken: token
+                    });
+                })
+            }
         } catch (error) {
-            res.status(401).json({ "error": error })
+            console.log(error);
+            res.status(statusCode.internal_server_error).json({ error, ResponseStatus: response_status.failure })
         }
     }
 
     /**
-     * Forget Password Chech User Exist or not if exist next else show Invalid email
+     * Forget Password Check User Exist or not if exist next else show Invalid email
      * @param {*} req 
      * @param {*} res 
      * @returns 
@@ -118,7 +124,7 @@ class usersController {
             });
             res.status(statusCode.ok).json({ message: messages.emailToResetPassword, response_status: response.success });
         } catch (error) {
-            res.status(401).json({ "error": error })
+            res.status(statusCode.internal_server_error).json({ error, ResponseStatus: response_status.failure })
         }
     }
 
@@ -132,16 +138,13 @@ class usersController {
         const email = cryptr.decrypt(req.query.email)
         const hashedPassword = await hash(req.body.password, 10);
         try {
-            const errors = validationResult(req);
-            if (!errors.isEmpty()) {
-                return res.status(400).json({ errors: errors.array() });
-            }
-            findOneAndUpdate({
+
+            User.findOneAndUpdate({
                 email: email
             },
                 { $set: { password: hashedPassword } })
         } catch (error) {
-            res.status(401).json({ "error": error })
+            res.status(statusCode.internal_server_error).json({ error, ResponseStatus: response_status.failure })
         }
     }
 }

@@ -2,9 +2,9 @@ import { Schema as _Schema, model } from 'mongoose';
 const Schema = _Schema;
 
 const ticketSchema = new Schema({
-    sessionId: {
+    slotId: {
         type: Schema.Types.ObjectId,
-        required: false
+        required: true
     },
     slotNo: {
         type: Number,
@@ -12,15 +12,15 @@ const ticketSchema = new Schema({
     },
     vehicleOwnerName: {
         type: String,
-        required: false
+        required: true
     },
     vehicleOwnerEmail: {
         type: String, match: /^([^@]+?)@(([a-z0-9]-*)*[a-z0-9]+\.)+([a-z0-9]+)$/i,
-        required: false
+        required: true
     },
     vehicleOwnerPhoneNo: {
         type: String,
-        required: false
+        required: true
     },
     vehicleType: {
         type: String,
@@ -29,15 +29,16 @@ const ticketSchema = new Schema({
     },
     vehicleNo: {
         type: String,
-        required: false,
+        required: true,
     },
     VehicleEntered_At: {
         type: Date,
-        required: false
+        required: true
     },
     vehicleReturned_At: {
         type: Date,
-        required: false
+        required: false,
+        default: null
     }
 })
 

@@ -77,7 +77,7 @@ const registrationValidation = [
  */
 const loginValidation = [
     body("email")
-        .not().isEmpty().trim().withMessage("Please Enter Your Email").bail()
+        .not().isEmpty().withMessage("Please Enter Your Email").bail()
         .matches(/^(?!\d+@)\w+([-+.']\w+)*@(?!\d+\.)\w+([-.]\w+)*\.\w+([-.]\w+)*$/).withMessage('Please Enter Valid Email').bail()
         .custom(async (value) => {
             const userData = await User.findOne({

@@ -20,13 +20,8 @@ const adressSlotDetailScema = new Schema({
     },
     totalAvailbleSlots: {
         type: String,
-        required: true
-    },
-    activeAddress: {
-        type: String,
-        enum:["active", "inActive"],
-        default:"inActive",
-        required: true
+        required: true,
+        default: 0
     },
     total_income: {
         type: String,
@@ -35,4 +30,4 @@ const adressSlotDetailScema = new Schema({
 
 },{ timestamps: false });
 
-export default model('DailySession', adressSlotDetailScema);
+export default model('adressSlotDetail', adressSlotDetailScema);

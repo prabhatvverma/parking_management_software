@@ -1,6 +1,5 @@
-import DailySession from "../models/adressSlotDetail.js";
-import { validationResult } from 'express-validator';
-import { messages,statusCode,response_status } from "../helpers/messegeStatusCode.js";
+import adressSlotDetail from "../models/adressSlotDetail.js";
+import { messages, statusCode, response_status } from "../helpers/messegeStatusCode.js";
 class userAddressSlotController {
 
     /**
@@ -12,11 +11,7 @@ class userAddressSlotController {
     async addAddressForSession(req, res) {
         const userId = req.userData._id
         try {
-            const errors = validationResult(req);
-            if (!errors.isEmpty()) {
-                return res.status(422).json({ errors: errors.array() });
-            }
-            await DailySession.create({
+            await adressSlotDetail.create({
                 userId: userId,
                 address: req.body.address,
                 totalSlots: req.body.totalSlots,
@@ -24,7 +19,7 @@ class userAddressSlotController {
             })
             res.status(statusCode.ok).json({ Message: messages.SlotCreated, ResponceCode: response_status.success })
         } catch (error) {
-            res.status(401).json({ "error": error })
+            res.status(statusCode.internal_server_error).json({ error, ResponseStatus: response_status.failure })
         }
     }
 
@@ -37,19 +32,25 @@ class userAddressSlotController {
     async getAddress(req, res) {
         const userId = req.userData._id
         try {
-            const allSlots = await DailySession.find({
+            const allSlots = await adressSlotDetail.find({
                 userId: userId
             })
-            if (allSlots == null) {
-                res.status(204).json({ Message: "No Address Are Created For That User" })
+            if (allSlots.length <= 0) {
+                res.status(statusCode.ok).json({
+                    Message: messages.NoAddress,
+                    ResponseStatus: response_status.failure
+                })
+                return
             }
-            const address = [];
-            allSlots.forEach(element => {
-                address.push(element.address)
-            });
-            res.status(200).json({
-                Message: "success",
-                address
+            const allIdAddress = [];
+            allSlots.forEach(({ _id, address }) => {
+                allIdAddress.push({ _id, address })
+            })
+            // console.log();
+            res.status(statusCode.ok).json({
+                Message: messages.AllAddress,
+                ResponceCode: response_status.success,
+                Address: allIdAddress``
             })
         } catch (err) {
             res.status(401).send({ "err": err })
@@ -63,32 +64,41 @@ class userAddressSlotController {
     async showDetailsForSelectedSlot(req, res) {
         const userId = req.userData._id
         try {
-            const data = await DailySession.findOne({
+            const data = await adressSlotDetail.findOne({
                 userId: userId,
                 address: req.body.address
             })
-            console.log(data);
-            if (data.activeAddress != "active") {
-                await DailySession.updateOne({
-                    userId: userId,
-                    address: req.body
-                },
-                    {
-                        $set: { activeAddress: "active" }
-                    })
-                res.status(201).json("Active Slot Is Opened")
+            if (data == null) {
+                res.status(statusCode.ok).json({
+                    message: "No Address Are Created For This User",
+                    ResponceCode: response_status.failure
+                })
+                return
             }
-            // console.log(data.address, data.totalSlots, data.price);
-            res.status(200).json({
-                Message: "User LogedIn Again",
+            // if (data.activeAddress != "active") {
+            //     await adressSlotDetail.updateOne(
+            //         data,
+            //         {
+            //             $set: { activeAddress: "active" }
+            //         })
+            //     res.status(statusCode.createdSuccess).json({
+            //         Message: messages.SelectedAddressActive,
+            //         ResponceStatus: response_status.success,
+            //         Address: data.address,
+            //         TotalSlots: data.totalSlots,
+            //         PriceForAddress: data.price
+            //     })
+            // }
+            res.status(statusCode.ok).json({
+                Message: messages.SelectedAddressActive,
+                ResponceStatus: response_status.success,
                 Address: data.address,
                 TotalSlots: data.totalSlots,
                 PriceForAddress: data.price
             })
-
         } catch (error) {
             console.log(error);
-            res.status(401).json({ "error": error })
+            res.status(statusCode.internal_server_error).json({ error, ResponseStatus: response_status.failure })
         }
     }
 
