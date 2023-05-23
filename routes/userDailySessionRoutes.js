@@ -6,7 +6,7 @@ import slotValidation from "../midileware/validation/userSlotValidation.js";
 import validateFile from "../midileware/validationresult/validationResult.js"
 
 router.use(authentication);
-router.get('/',validateFile, userAddressSlotController.getAddress);
+router.get('/getaddress',validateFile, userAddressSlotController.getAddress);
 router.post('/addslot', slotValidation,validateFile, userAddressSlotController.addAddressForSession);
 router.post('/showdetails', userAddressSlotController.showDetailsForSelectedSlot)
 export default router;

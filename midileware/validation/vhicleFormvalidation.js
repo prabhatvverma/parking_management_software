@@ -18,11 +18,13 @@ const vhicleFormValidation = [
     body("vehicleOwnerEmail")
         .not().isEmpty().withMessage("Please Enter Your Email").bail()
         .matches(/^(?!\d+@)\w+([-+.']\w+)*@(?!\d+\.)\w+([-.]\w+)*\.\w+([-.]\w+)*$/).withMessage("Please Enter Valid Email").bail(),
-        // .isEmail().withMessage("Please Enter Valid Email").bail(),
+    // .isEmail().withMessage("Please Enter Valid Email").bail(),
 
     body("vehicleOwnerPhoneNo")
         .not().isEmpty().trim().withMessage("Please Enter PhoneNo").bail()
         .isMobilePhone().withMessage("Please Enter Valid PhoneNo")
+        .isLength({ min: 10 }).withMessage("Phone No. Must Have 10 Digits").bail()
+        .isLength({ max: 10 }).withMessage("Phone No. Does Not Have More Than 10 Digits").bail()
     ,
     body("vehicleType")
         .not().isEmpty().trim().withMessage("Please Enter VehicleType").bail(),

@@ -10,7 +10,7 @@ import validateFile from "../midileware/validationresult/validationResult.js";
  */
 
 router.use(authentication);
-router.post('/',  vehicleinfoController.storeVhicleInfo);
-router.post('/return', vehicleinfoController.returnVhicle);
+router.post('/parking', vhicleFormValidation, validateFile, vehicleinfoController.storeVhicleInfo);
+router.post('/unparking', vehicleinfoController.returnVhicle);
 
 export default router;

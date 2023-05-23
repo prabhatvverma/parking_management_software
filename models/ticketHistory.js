@@ -6,7 +6,7 @@ const ticketHistorySchema = new Schema({
         type: Schema.Types.ObjectId,
         required: true
     },
-    session_id: {
+    slotId: {
         type: Schema.Types.ObjectId,
         required: true
     },
@@ -35,18 +35,17 @@ const ticketHistorySchema = new Schema({
         type: String,
         required: true,
     },
-    slotStatus:{
-        type:String,
-        enum:['parked', 'free'],
-        default: 'parked'
-    },
-    VehicleEntered_At: {
+    vehicleEntered_At: {
         type: Date,
-        required: true
+        required: false
     },
     vehicleReturned_At: {
         type: Date,
         required: false
+    },
+    vehicleTicket:{
+        type: String,
+        required: true 
     },
     totalRent: {
         type: String,

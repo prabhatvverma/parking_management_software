@@ -31,7 +31,7 @@ const ticketSchema = new Schema({
         type: String,
         required: true,
     },
-    VehicleEntered_At: {
+    vehicleEntered_At: {
         type: Date,
         required: true
     },
@@ -39,6 +39,10 @@ const ticketSchema = new Schema({
         type: Date,
         required: false,
         default: null
+    },
+    vehicleTicket:{
+        type: String,
+        required: true
     }
 })
 

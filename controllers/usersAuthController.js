@@ -89,8 +89,6 @@ class usersController {
             })
             const userId = userData._id.toHexString();
             const comparePass = await compare(req.body.password, userData.password)
-            // console.log(he);
-            // return false
             if (comparePass == true) {
                 jwt.sign({ userId }, process.env.JWT_SECRET_KEY, { expiresIn: '24h' }, (err, token) => {
                     res.status(200).json({
@@ -100,7 +98,6 @@ class usersController {
                 })
             }
         } catch (error) {
-            console.log(error);
             res.status(statusCode.internal_server_error).json({ error, ResponseStatus: response_status.failure })
         }
     }
@@ -115,7 +112,7 @@ class usersController {
         try {
             //SENDING EMAIL TO USER TO RESET HIS PASSWOORD
             const encryptedEmail = cryptr.encrypt(req.body.email);
-            let url = process.env.BASE_URL + `/api/auth/changepassword?email=` + encryptedEmail
+            let url = process.env.BASE_URL + `/api/auth/forgetverify?email=` + encryptedEmail
             sendMail({
                 from: process.env.EMAIL_FROM,
                 to: req.body.email,
@@ -129,22 +126,55 @@ class usersController {
     }
 
     /**
+     * EMAIL THAT WE HAVE RECIVED ON EMAIL WE CAN VERIFY USING THIS API
+     * @param {*} req 
+     * @param {*} res 
+     * @param {*} next 
+     * @returns 
+     */
+    async verifyEmailForForgetPass(req, res, next) {
+        try {
+            const email = cryptr.decrypt(req.query.email)
+            const userData = await User.findOne({
+                email: email
+            })
+            if (userData) {
+                res.status(statusCode.ok).json({
+                    Message: messages.forgetPassVali,
+                    ResponceCode: response_status.success,
+                    UserEmail: userData.email
+                })
+                return
+            }
+            res.status(statusCode.bad_request).json({
+                Message: messages.resendLink,
+                ResponceCode: response_status.failure
+            })
+        } catch (error) {
+            res.status(statusCode.internal_server_error).json({ Message: error.message, ResponseStatus: response_status.failure })
+        }
+    }
+    /**
      * User Can Create New Password For User
      * @param {*} req 
      * @param {*} res 
      * @returns 
      */
     async createNewPasswordForUser(req, res) {
-        const email = cryptr.decrypt(req.query.email)
-        const hashedPassword = await hash(req.body.password, 10);
         try {
-
-            User.findOneAndUpdate({
+            const email = req.body.email
+            const hashedPassword = await hash(req.body.password, 10);
+            User.updateOne({
                 email: email
             },
-                { $set: { password: hashedPassword } })
+                { password: hashedPassword }
+            )
+            res.status(statusCode.ok).json({
+                Message: messages.newPassGen,
+                ResponceCode: response_status.success
+            })
         } catch (error) {
-            res.status(statusCode.internal_server_error).json({ error, ResponseStatus: response_status.failure })
+            res.status(statusCode.internal_server_error).json({ Message: error.message, ResponseStatus: response_status.failure })
         }
     }
 }

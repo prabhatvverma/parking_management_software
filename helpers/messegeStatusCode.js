@@ -7,7 +7,8 @@ const messages = {
   emailVarified: "Your Email Has Been Successfully Varified",
   LoginSuccess:
     "User login SuccessFully",
-
+  newPassGen:
+    "New Password have Been genrated For The User",
   SlotCreated:
     "Address Slots Have Been Created Successfully",
   NoAddress:
@@ -18,12 +19,24 @@ const messages = {
     "User's Selected Address Is Now Active",
   alredyActiveAddress:
     "Your Address Is Already Active Welcome Back To Selected Address",
+  noAddress:
+    "No Address Are Created For This User",
+
 
 
   vhicleInfoSaved:
     "Vehicle Details Have Been Saved Successfully",
   parkinFull:
-    "Parking Is Full Please try Again After Some Time"
+    "Parking Is Full Please try Again After Some Time",
+
+  unparkeVehcle:
+    "Vehicle Unparked Successfully",
+  alreadyUnparked:
+    "Wrong Ticket Or Ticket Already used",
+  forgetPassVali:
+    "User Forget Password Email Validation Successfull",
+  resendLink:
+    "Something Wents Wrong Please Resend Email"
 
 
 };

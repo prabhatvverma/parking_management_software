@@ -1,5 +1,6 @@
 import adressSlotDetail from "../models/adressSlotDetail.js";
 import { messages, statusCode, response_status } from "../helpers/messegeStatusCode.js";
+import TicketHistory from "../models/ticketHistory.js";
 class userAddressSlotController {
 
     /**
@@ -50,12 +51,14 @@ class userAddressSlotController {
             res.status(statusCode.ok).json({
                 Message: messages.AllAddress,
                 ResponceCode: response_status.success,
-                Address: allIdAddress``
+                Address: allIdAddress
             })
         } catch (err) {
             res.status(401).send({ "err": err })
         }
     }
+
+
     /**
      * 
      * @param {*} req 
@@ -68,9 +71,10 @@ class userAddressSlotController {
                 userId: userId,
                 address: req.body.address
             })
+            // console.log(data);
             if (data == null) {
                 res.status(statusCode.ok).json({
-                    message: "No Address Are Created For This User",
+                    message: messages.noAddress ,
                     ResponceCode: response_status.failure
                 })
                 return
@@ -89,6 +93,15 @@ class userAddressSlotController {
             //         PriceForAddress: data.price
             //     })
             // }
+            const ticketHistorydata = await TicketHistory.find({
+                slotId: data._id
+            })
+            // console.log(ticketHistorydata);
+            const totalRentForAddress = ticketHistorydata.filter((eliment) => {
+                console.log();
+                return eliment.totalRent != null                           //find out how many slots that have alrady return the carr and they are free
+            })
+            console.log(totalRentForAddress);
             res.status(statusCode.ok).json({
                 Message: messages.SelectedAddressActive,
                 ResponceStatus: response_status.success,
