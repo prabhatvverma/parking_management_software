@@ -13,9 +13,9 @@ const addAddress = async (req, res) => {
     try {
         req.body.userId = req.userData._id
         await ParkingDetail.create(req.body)
-        res.status(statusCode.ok).json({ Message: messages.SlotCreated, ResponceCode: response_status.success })
+        return res.status(statusCode.ok).json({ Message: messages.SlotCreated, ResponceCode: response_status.success })
     } catch (error) {
-        res.status(statusCode.internal_server_error).json({ error, ResponseStatus: response_status.failure })
+        return res.status(statusCode.internal_server_error).json({ error, ResponseStatus: response_status.failure })
     }
 }
 
@@ -32,22 +32,14 @@ const getAddress = async (req, res) => {
             userId: userId
         })
         if (allSlots.length <= 0) {
-            res.status(statusCode.ok).json({
-                Message: messages.NoAddress,
-                ResponseStatus: response_status.failure
-            })
-            return
+            return res.status(statusCode.ok).json({ Message: messages.NoAddress, ResponseStatus: response_status.failures })
         }
         const allIdAddress = [];
         allSlots.forEach(({ _id, address }) => {
             allIdAddress.push({ _id, address })
         })
         // console.log();
-        res.status(statusCode.ok).json({
-            Message: messages.AllAddress,
-            ResponceCode: response_status.success,
-            Address: allIdAddress
-        })
+        return res.status(statusCode.ok).json({ Message: messages.AllAddress, ResponceCode: response_status.success, Address: allIdAddress })
     } catch (err) {
         res.status(401).send({ "err": err })
     }
@@ -67,11 +59,7 @@ const showDetails = async (req, res) => {
             address: req.body.address
         })
         if (data == null) {
-            res.status(statusCode.ok).json({
-                message: messages.noAddress,
-                ResponceCode: response_status.failure
-            })
-            return
+            return res.status(statusCode.ok).json({ message: messages.noAddress, ResponceCode: response_status.failure })
         }
         // if (data.activeAddress != "active") {
         //     await ParkingDetail.updateOne(
@@ -93,7 +81,7 @@ const showDetails = async (req, res) => {
 
         const amount = ticketHistorydata.reduce((initial, element) => {
             return initial + element.totalRent
-        },0)
+        }, 0)
         res.status(statusCode.ok).json({
             Message: messages.SelectedAddressActive,
             ResponceStatus: response_status.success,

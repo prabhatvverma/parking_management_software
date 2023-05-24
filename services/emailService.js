@@ -14,7 +14,7 @@ async function sendMail({ to, subject, html }) {
         to,
         html,
     })
-    console.log(info);
+    // console.log(info);
 }
 
 export default sendMail;
