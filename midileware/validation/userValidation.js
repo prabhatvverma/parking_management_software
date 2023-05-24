@@ -1,5 +1,5 @@
 import { body } from 'express-validator';
-import User from '../../models/user.js';
+import User from '../../models/User.js';
 import { compare } from 'bcrypt';
 /**
  * Validation Conditions For User Registration 

@@ -1,12 +1,12 @@
 const messages = {
   emailSentCuccessfully:
-    "We Have Send You A VrificAtion Link On Your Email Please Click On Verify To Verify Your Email.",
+    "We Have Send You A Verification Link On Your Email Please Click On Verify To Verify Your Email.",
   emailAlreadyVerified: "Upsss seems like this email is already verified.",
   emailToResetPassword:
-    "We Have Send An Email Link To Reset Your Password Click On Reset To Reset Your Password",
+    "We Have Send An Email Link To Reset Your Password Click On Reset To Reset Your Password Redirect To Create New Password Page",
   emailVarified: "Your Email Has Been Successfully Varified",
   LoginSuccess:
-    "User login SuccessFully",
+    "User login SuccessFully Redirect To /api/session/getaddress",
   newPassGen:
     "New Password have Been genrated For The User",
   SlotCreated:

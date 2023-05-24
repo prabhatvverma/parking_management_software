@@ -1,5 +1,5 @@
 import { body } from 'express-validator';
-import adressSlotDetail from "../../models/adressSlotDetail.js";
+import adressSlotDetail from "../../models/ParkingDetail.js";
 const slotValidation = [
 
     /**

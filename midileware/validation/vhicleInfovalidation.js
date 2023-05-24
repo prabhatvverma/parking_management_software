@@ -10,17 +10,17 @@ import { body } from 'express-validator';
  *  
  */
 
-const vhicleFormValidation = [
-    body("vehicleOwnerName")
+const vhicleInfoValidation = [
+    body("ownerName")
         .not().isEmpty().trim().withMessage("Please Enter Your Name").bail()
         .isLength({ min: 4 }).trim().withMessage("Name must have atleast 4 cheractors").bail(),
 
-    body("vehicleOwnerEmail")
+    body("ownerEmail")
         .not().isEmpty().withMessage("Please Enter Your Email").bail()
         .matches(/^(?!\d+@)\w+([-+.']\w+)*@(?!\d+\.)\w+([-.]\w+)*\.\w+([-.]\w+)*$/).withMessage("Please Enter Valid Email").bail(),
     // .isEmail().withMessage("Please Enter Valid Email").bail(),
 
-    body("vehicleOwnerPhoneNo")
+    body("ownerPhoneNo")
         .not().isEmpty().trim().withMessage("Please Enter PhoneNo").bail()
         .isMobilePhone().withMessage("Please Enter Valid PhoneNo")
         .isLength({ min: 10 }).withMessage("Phone No. Must Have 10 Digits").bail()
@@ -34,4 +34,4 @@ const vhicleFormValidation = [
         .isLength({ min: 4 })
 ]
 
-export default vhicleFormValidation;
+export default vhicleInfoValidation;

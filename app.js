@@ -2,18 +2,18 @@ import createError from 'http-errors';
 import express, { json, urlencoded } from 'express';
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
-import mongoConnection from "./config/config.js";
+import connectDB from "./config/database.js";
 import fileUpload from 'express-fileupload';
 
 
 const app = express();
 
 // DB CONNECTION 
-mongoConnection();
+connectDB();
 
 // REQUIRING ROUTES FOLDER FILE TO DEFINE ROUTES
-import usersRoute from './routes/usersRoutes.js';
-import dailySessionRoute from './routes/userDailySessionRoutes.js';
+import authRoutes from './routes/authRoutes.js';
+import sessionRoute from './routes/slotRoutes.js';
 import vehicleInfoRoute from './routes/vehicleInfoRoute.js';
 app.use(logger('dev'));
 app.use(json());
@@ -26,8 +26,8 @@ app.use(fileUpload({
 
 
 //CREATING ROUTE
-app.use('/api/auth/', usersRoute);
-app.use('/api/session/', dailySessionRoute);
+app.use('/api/auth/', authRoutes);
+app.use('/api/session/', sessionRoute);
 app.use('/api/vehicleinfo/', vehicleInfoRoute);
 
 
@@ -41,10 +41,9 @@ app.use(function(err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
-
   res.status(err.status || 500);
-  
 });
+
 app.listen(3000,()=>{
   console.log("runnig on 3000");
 })

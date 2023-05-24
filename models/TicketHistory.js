@@ -14,15 +14,15 @@ const ticketHistorySchema = new Schema({
         type: Number,
         required: true
     },
-    vehicleOwnerName: {
+   ownerName: {
         type: String,
         required: true
     },
-    vehicleOwnerEmail: {
+    ownerEmail: {
         type: String , match: /^([^@]+?)@(([a-z0-9]-*)*[a-z0-9]+\.)+([a-z0-9]+)$/i,
         required: true
     },
-    vehicleOwnerPhoneNo: {
+    ownerPhoneNo: {
         type: String,
         required: true
     },
@@ -48,7 +48,7 @@ const ticketHistorySchema = new Schema({
         required: true 
     },
     totalRent: {
-        type: String,
+        type: Number,
         required: true
     }
 })

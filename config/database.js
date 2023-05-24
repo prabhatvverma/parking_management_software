@@ -12,7 +12,4 @@ async function connectDB() {
         process.exit(1);
     }
 }
-
-// mIAY0a6u1ByJsWWZ
-
 export default connectDB;

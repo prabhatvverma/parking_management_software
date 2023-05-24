@@ -1,7 +1,5 @@
 import { validationResult } from "express-validator";
 
-
-
 /**
  * THIS FUNCTION IS FOR GET VALIDATION RESULT (function for error store)
  * @param {*} req 

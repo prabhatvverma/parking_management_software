@@ -10,15 +10,15 @@ const ticketSchema = new Schema({
         type: Number,
         required: false
     },
-    vehicleOwnerName: {
+    ownerName: {
         type: String,
         required: true
     },
-    vehicleOwnerEmail: {
+    ownerEmail: {
         type: String, match: /^([^@]+?)@(([a-z0-9]-*)*[a-z0-9]+\.)+([a-z0-9]+)$/i,
         required: true
     },
-    vehicleOwnerPhoneNo: {
+    ownerPhoneNo: {
         type: String,
         required: true
     },
@@ -31,11 +31,11 @@ const ticketSchema = new Schema({
         type: String,
         required: true,
     },
-    vehicleEntered_At: {
+    parked_At: {
         type: Date,
-        required: true
+        required: false
     },
-    vehicleReturned_At: {
+    returned_At: {
         type: Date,
         required: false,
         default: null
