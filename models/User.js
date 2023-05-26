@@ -1,16 +1,21 @@
 import { Schema as _Schema, model } from 'mongoose';
 import { hash } from 'bcrypt';
+import validator from 'validator';
 const Schema = _Schema;
 
 const userSchema = new Schema({
     name: {
         type: String,
-        required: true
+        required: true,
+        maxlength: [20, "Name can not have more than 20 charecters"],
+        minlength: [4, "Name must have atleast 4 charecters"]
     },
     email: {
-        type: String, match: /^([^@]+?)@(([a-z0-9]-*)*[a-z0-9]+\.)+([a-z0-9]+)$/i,
+        type: String, 
         required: true,
-        unique: true
+        unique: true,
+        match: /^([^@]+?)@(([a-z0-9]-*)*[a-z0-9]+\.)+([a-z0-9]+)$/i,
+        validate: [validator.isEmail, "Please enter a valid email"]
     },
     phoneNo: {
         type: String,
@@ -22,7 +27,8 @@ const userSchema = new Schema({
     },
     password: {
         type: String,
-        required: true
+        required: true,
+        minlength: [4, "Atleast required 4 charecters"],
     },
     emailVerifiedAt: {
         type: Date,
@@ -31,18 +37,14 @@ const userSchema = new Schema({
 
 }, { timestamps: true });
 
-// userSchema.pre('save', async function (next) {
-//     try {
-//         if (!this.isModified('password')) {
-//             return next();
-//         }
-//         const hashedPassword = await hash(this.password, 10);
-//         this.password = hashedPassword
+// userSchema.pre("save", async function(next) {
+//     // Do not run if password not changed
+//     if (!this.isModified("password")) {
 //         next();
-//     } catch (error) {
-//         console.log(error);
-//         return next(error);
 //     }
+//     this.password = await bcrypt.hash(this.password, 10);
+//     next();
 // })
+
 
 export default model('User', userSchema);

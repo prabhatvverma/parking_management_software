@@ -13,7 +13,9 @@ const registrationValidation = [
 
     body("name")
         .not().isEmpty().trim().withMessage("Please Enter Your Name").bail()
-        .isLength({ min: 4 }).trim().withMessage("Name must have atleast 4 cheractors").bail(),
+        .isLength({ min: 4 }).trim().withMessage("Name must have atleast 4 charecters").bail()
+        .matches(/^[A-Za-z\s]+$/).withMessage("Numbers & Special charecters Are Not Allowed").bail()
+        .isLength({ max: 20 }).trim().withMessage("Name can not have more than 20 charecters").bail(),
 
     /**
      * VALIDATION TO BE APPLY ON NAME
@@ -51,14 +53,14 @@ const registrationValidation = [
     // VALIDATION ON ADDRESS    
     body("address")
         .not().isEmpty().trim().withMessage("Please Enter Your Address").bail()
-        .isLength({ min: 5 }).withMessage("Atleast 5 Charectors").bail()
+        .isLength({ min: 5 }).withMessage("Atleast 5 charecters").bail()
         .isLength({ max: 25 }).withMessage("Address Can Not Have More Than 25 Words")
     ,
 
     //VALIDATION APPLYED ON PASSWORD    
     body("password")
         .not().isEmpty().trim().withMessage("Please Enter Your Password").bail()
-        .isLength({ min: 4 }).withMessage("Atleast 4 Charectors").bail(),
+        .isLength({ min: 4 }).withMessage("Atleast 4 charecters").bail(),
 
     // VALIDATION FRO CONFERM PASSWORD
     body("cnfPassword").not().isEmpty().withMessage("Enter Password").bail()
@@ -91,7 +93,7 @@ const loginValidation = [
         }).bail(),
     body("password")
         .not().isEmpty().trim().withMessage("Please Enter Your Password").bail()
-        .isLength({ min: 4 }).withMessage("Atleast 4 Charectors").bail()
+        .isLength({ min: 4 }).withMessage("Atleast 4 charecters").bail()
         .custom(async (value, { req }) => {
             const userData = await User.findOne({
                 email: req.body.email
@@ -127,7 +129,7 @@ const forgetPassworvalidation = [
 const createNewPasswordValidation = [
     body("password")
         .not().isEmpty().trim().withMessage("Please Enter Your Password").bail()
-        .isLength({ min: 4 }).withMessage("Atleast 4 Charectors").bail(),
+        .isLength({ min: 4 }).withMessage("Atleast 4 charecters").bail(),
 
     body("cnfPassword").not().isEmpty().withMessage("Enter Password").bail()
         .custom(async (value, { req }) => {

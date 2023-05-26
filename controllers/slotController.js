@@ -26,19 +26,18 @@ const addAddress = async (req, res) => {
  */
 
 const getAddress = async (req, res) => {
-    const userId = req.userData._id
     try {
+        const userId = req.userData._id
         const allSlots = await ParkingDetail.find({
             userId: userId
         })
         if (allSlots.length <= 0) {
-            return res.status(statusCode.ok).json({ Message: messages.NoAddress, ResponseStatus: response_status.failures })
+            return res.status(statusCode.ok).json({ Message: messages.NoAddress, ResponseStatus: response_status.failure })
         }
         const allIdAddress = [];
         allSlots.forEach(({ _id, address }) => {
             allIdAddress.push({ _id, address })
         })
-        // console.log();
         return res.status(statusCode.ok).json({ Message: messages.AllAddress, ResponceCode: response_status.success, Address: allIdAddress })
     } catch (err) {
         res.status(401).send({ "err": err })
@@ -58,38 +57,28 @@ const showDetails = async (req, res) => {
             userId: userId,
             address: req.body.address
         })
-        if (data == null) {
+        if (data === null) {
             return res.status(statusCode.ok).json({ message: messages.noAddress, ResponceCode: response_status.failure })
         }
-        // if (data.activeAddress != "active") {
-        //     await ParkingDetail.updateOne(
-        //         data,
-        //         {
-        //             $set: { activeAddress: "active" }
-        //         })
-        //     res.status(statusCode.createdSuccess).json({
-        //         Message: messages.SelectedAddressActive,
-        //         ResponceStatus: response_status.success,
-        //         Address: data.address,
-        //         TotalSlots: data.totalSlots,
-        //         PriceForAddress: data.price
-        //     })
-        // }
-        const ticketHistorydata = await TicketHistory.find({
-            slotId: data._id
-        })
+        const ticketHistorydata = await TicketHistory.aggregate([
+            { $match: { slotId: data._id } },
+            { $group: { _id: null, totalAmount: { $sum: "$totalRent" } } }
+        ]);
+        if (ticketHistorydata.length > 0) {
+            const amount = ticketHistorydata[0].totalAmount;
+            return res.status(statusCode.ok).json({
+                Message: messages.SelectedAddressActive,
+                ResponceStatus: response_status.success,
+                Address: data.address,
+                TotalSlots: data.totalSlots,
+                PriceForAddress: data.price,
+                TotalRevenuForThisAddress: amount
+            })
+        } else {
+            return res.status(statusCode.ok).json({ Message: messages.noTickets })
+        }
 
-        const amount = ticketHistorydata.reduce((initial, element) => {
-            return initial + element.totalRent
-        }, 0)
-        res.status(statusCode.ok).json({
-            Message: messages.SelectedAddressActive,
-            ResponceStatus: response_status.success,
-            Address: data.address,
-            TotalSlots: data.totalSlots,
-            PriceForAddress: data.price,
-            TotalRevenuForThisAddress: amount
-        })
+
     } catch (error) {
         console.log(error);
         res.status(statusCode.internal_server_error).json({ error, ResponseStatus: response_status.failure })

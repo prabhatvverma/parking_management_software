@@ -8,12 +8,7 @@ const slotValidation = [
     body("address")
         .not().isEmpty().withMessage("Please Enter Address").bail()
         .custom(async (value, { req }) => {
-            const data = await adressSlotDetail.findOne(
-                {
-                    userId: req.userData._id,
-                    address: value
-                }
-            )
+            const data = await adressSlotDetail.findOne({ userId: req.userData._id, address: value })
             if (data) {
                 throw new Error("Adress is Already Registered With Same Name, Address Should Be Unique")
             }
@@ -24,8 +19,9 @@ const slotValidation = [
      */
     body("totalSlots")
         .not().isEmpty().trim().withMessage("Please Enter Total Available Slots").bail()
+
         .isInt().withMessage("Please Enter Slots In Number Formate").bail(),
-    
+
     /**
      * VALIDATION TO BE APPLY ON PRICE
      */

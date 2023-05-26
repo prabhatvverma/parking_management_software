@@ -13,7 +13,9 @@ import { body } from 'express-validator';
 const vhicleInfoValidation = [
     body("ownerName")
         .not().isEmpty().trim().withMessage("Please Enter Your Name").bail()
-        .isLength({ min: 4 }).trim().withMessage("Name must have atleast 4 cheractors").bail(),
+        .matches(/^[A-Za-z\s]+$/).withMessage("Special charecters Are Not Allowed").bail()
+        .isLength({ min: 4 }).trim().withMessage("Name must have atleast 4 cheractors").bail()
+        .isLength({ max: 20 }).trim().withMessage("Name can not have more than 20 charecters").bail(),
 
     body("ownerEmail")
         .not().isEmpty().withMessage("Please Enter Your Email").bail()

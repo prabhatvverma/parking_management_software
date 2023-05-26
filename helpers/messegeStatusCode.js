@@ -21,8 +21,9 @@ const messages = {
     "Your Address Is Already Active Welcome Back To Selected Address",
   noAddress:
     "No Address Are Created For This User",
-
-
+  noTickets:
+    "No Tickets Are Genrated For This Address",
+  jwtError: "Please provide autherisation token",
 
   vhicleInfoSaved:
     "Vehicle Details Have Been Saved Successfully",
@@ -48,7 +49,7 @@ const response_status = {
 const statusCode = {
   ok: 200,
   createdSuccess: 201,
-  bad_request: 400,
+  bad_request: 400, 
   no_content: 204,
   internal_server_error: 500,
 };
